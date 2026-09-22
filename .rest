@@ -1,0 +1,49 @@
+@baseUrl = http://localhost:3000
+@contentType = application/json
+@userId = 6ab2ceb8aa32af702cfff24f
+
+### findAll
+GET {{baseUrl}}/users
+
+### findById
+GET {{baseUrl}}/users/aaaaa
+
+### create
+POST {{baseUrl}}/users
+Content-Type: {{contentType}}
+
+{
+  "firstName": "João", 
+  "lastName": "Silva", 
+  "email": "lala@gmail.com",
+  "passwordHash": "123456",
+  "birthDate": "1990-01-01"
+}
+
+### update
+PATCH {{baseUrl}}/users/{{userId}}
+Content-Type: {{contentType}}
+
+{
+  "firstName": "Camilos"
+}
+
+### delete
+DELETE {{baseUrl}}/users/{{userId}}
+
+
+
+
+### Exemplo com variável salva de outra request
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "joao@email.com",
+  "password": "123456"
+}
+
+### Usando o token retornado no login
+GET {{baseUrl}}/users/me
+Authorization: Bearer {{login.response.body.token}}
