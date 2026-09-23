@@ -5,6 +5,8 @@ import { User } from "../schemas/user.schema";
 import { CreateUserDto } from "../dto/create-user.dto";
 import { UpdateUserDto } from "../dto/update-user.dto";
 import { IUsersRepository } from "./users-repository.interface";
+import { EmailAlreadyInUseError } from "../errors/email-already-in-use.error";
+import { MongoServerError } from 'mongodb';
 
 @Injectable()
 export class UsersRepository implements IUsersRepository {
@@ -12,7 +14,15 @@ export class UsersRepository implements IUsersRepository {
 	constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
 	async create(createUserDto: CreateUserDto) {
-		return await this.userModel.create(createUserDto);
+		try {
+			return await this.userModel.create(createUserDto);
+		} catch (error: unknown) {
+			if (error instanceof MongoServerError && error.code === 11000) {
+				throw new EmailAlreadyInUseError(createUserDto.email);
+			}
+
+			throw error;
+		}
 	}
 
 	async findAll() {
