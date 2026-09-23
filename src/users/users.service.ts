@@ -1,50 +1,49 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { User } from './schemas/user.schema';
 import { UserNotFoundError } from './errors/user-not-found.error';
+import { USERS_REPOSITORY } from './repositories/users-repository.interface';
+import type { IUsersRepository } from './repositories/users-repository.interface';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel(User.name) private userModel: Model<User>) {}
+	constructor(@Inject(USERS_REPOSITORY) private userRepository: IUsersRepository) {}
 
-  async create(createUserDto: CreateUserDto) {
-    return await this.userModel.create(createUserDto);
-  }
+	create(createUserDto: CreateUserDto) {
+		return this.userRepository.create(createUserDto);
+	}
 
-  async findAll() {
-    return await this.userModel.find();
-  }
+	findAll() {
+		return this.userRepository.findAll();
+	}
 
-  async findOne(id: string) {
-    const user =  await this.userModel.findById(id);
+	async findOne(id: string) {
+		const user = await this.userRepository.findById(id);
 
-    if (!user) {
-      throw new UserNotFoundError(id);
-    }
+		if (!user) {
+			throw new UserNotFoundError(id);
+		}
 
-    return user;
-  }
+		return user;
+	}
 
-  async update(id: string, updateUserDto: UpdateUserDto) {
-    const user =  await this.userModel.findByIdAndUpdate(id, updateUserDto, { returnDocument: 'after' });
+	async update(id: string, updateUserDto: UpdateUserDto) {
+		const user = await this.userRepository.findByIdAndUpdate(id, updateUserDto);
 
-    if (!user) {
-      throw new UserNotFoundError(id);
-    }
+		if (!user) {
+			throw new UserNotFoundError(id);
+		}
 
-    return user;
-  }
+		return user;
+	}
 
-  async remove(id: string) {
-    const deleted = await this.userModel.findByIdAndDelete(id);
+	async remove(id: string) {
+		const deleted = await this.userRepository.findByIdAndDelete(id);
 
-    if (!deleted) {
-      throw new UserNotFoundError(id);
-    }
+		if (!deleted) {
+			throw new UserNotFoundError(id);
+		}
 
-    return { message: 'User deleted successfully' };
-  }
+		return { message: 'User deleted successfully' };
+	}
 }
