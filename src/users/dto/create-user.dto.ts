@@ -24,7 +24,7 @@ export class CreateUserDto {
 	@IsString()
 	@IsNotEmpty()
 	@MinLength(6)
-	passwordHash: string;
+	password: string;
 
 	@IsDateString()
 	@IsNotEmpty()

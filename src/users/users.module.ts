@@ -23,5 +23,6 @@ import { USERS_REPOSITORY } from './repositories/users-repository.interface';
 			useClass: UsersRepository,
 		},
 	],
+	exports: [UsersService]
 })
 export class UsersModule {}

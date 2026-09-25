@@ -1,6 +1,6 @@
 @baseUrl = http://localhost:3000
 @contentType = application/json
-@userId = 6ab2ceb8aa32af702cfff24f
+@userId = 6ab5534da81edc63da8fa4f9
 
 ### findAll
 GET {{baseUrl}}/users
@@ -16,7 +16,7 @@ Content-Type: {{contentType}}
   "firstName": "João", 
   "lastName": "Silva", 
   "email": "lala@gmail.com",
-  "passwordHash": "123456",
+  "password": "123456",
   "birthDate": "1990-01-01"
 }
 
@@ -40,10 +40,10 @@ POST {{baseUrl}}/auth/login
 Content-Type: {{contentType}}
 
 {
-  "email": "joao@email.com",
+  "email": "lala@gmail.com",
   "password": "123456"
 }
 
 ### Usando o token retornado no login
 GET {{baseUrl}}/users/me
-Authorization: Bearer {{login.response.body.token}}
+Authorization: Bearer {{login.response.body.access_token}}

@@ -3,14 +3,24 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserNotFoundError } from './errors/user-not-found.error';
 import { USERS_REPOSITORY } from './repositories/users-repository.interface';
-import type { IUsersRepository } from './repositories/users-repository.interface';
+import type { CreateUserData, IUsersRepository } from './repositories/users-repository.interface';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
+
 	constructor(@Inject(USERS_REPOSITORY) private userRepository: IUsersRepository) {}
 
-	create(createUserDto: CreateUserDto) {
-		return this.userRepository.create(createUserDto);
+	async create(createUserDto: CreateUserDto) {
+		const {password, ...data } = createUserDto;
+		const hashedPasswd = await bcrypt.hash(password, 10);
+		
+		const newUser: CreateUserData = {
+			...data,
+			passwordHash: hashedPasswd,
+		};
+
+		return this.userRepository.create(newUser);
 	}
 
 	findAll() {
@@ -21,7 +31,17 @@ export class UsersService {
 		const user = await this.userRepository.findById(id);
 
 		if (!user) {
-			throw new UserNotFoundError(id);
+			throw new UserNotFoundError();
+		}
+
+		return user;
+	}
+
+	async findByEmail(email: string) {
+		const user = await this.userRepository.findByEmail(email);
+
+		if (!user) {
+			throw new UserNotFoundError();
 		}
 
 		return user;
@@ -31,7 +51,7 @@ export class UsersService {
 		const user = await this.userRepository.findByIdAndUpdate(id, updateUserDto);
 
 		if (!user) {
-			throw new UserNotFoundError(id);
+			throw new UserNotFoundError();
 		}
 
 		return user;
@@ -41,7 +61,7 @@ export class UsersService {
 		const deleted = await this.userRepository.findByIdAndDelete(id);
 
 		if (!deleted) {
-			throw new UserNotFoundError(id);
+			throw new UserNotFoundError();
 		}
 
 		return { message: 'User deleted successfully' };
