@@ -1,12 +1,24 @@
 @baseUrl = http://localhost:3000
 @contentType = application/json
-@userId = 6ab5534da81edc63da8fa4f9
+@userId = 6ab56530e143cc1bb94bc4d1
+
+### login
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "lala@gmail.com",
+  "password": "123456"
+}
 
 ### findAll
 GET {{baseUrl}}/users
+Authorization: Bearer {{login.response.body.accessToken}}
 
 ### findById
-GET {{baseUrl}}/users/aaaaa
+GET {{baseUrl}}/users/{{userId}}
+Authorization: Bearer {{login.response.body.accessToken}}
 
 ### create
 POST {{baseUrl}}/users
@@ -23,6 +35,7 @@ Content-Type: {{contentType}}
 ### update
 PATCH {{baseUrl}}/users/{{userId}}
 Content-Type: {{contentType}}
+Authorization: Bearer {{login.response.body.accessToken}}
 
 {
   "firstName": "Camilos"
@@ -30,20 +43,4 @@ Content-Type: {{contentType}}
 
 ### delete
 DELETE {{baseUrl}}/users/{{userId}}
-
-
-
-
-### Exemplo com variável salva de outra request
-# @name login
-POST {{baseUrl}}/auth/login
-Content-Type: {{contentType}}
-
-{
-  "email": "lala@gmail.com",
-  "password": "123456"
-}
-
-### Usando o token retornado no login
-GET {{baseUrl}}/users/me
-Authorization: Bearer {{login.response.body.access_token}}
+Authorization: Bearer {{login.response.body.accessToken}}

@@ -9,3 +9,13 @@ export type AuthenticatedUser = Omit<User, 'passwordHash'> & {
 export interface AuthenticatedRequest extends Request {
   user: AuthenticatedUser;
 }
+
+export interface JwtPayload {
+  sub: Types.ObjectId;
+  email: string;
+}
+
+export interface AuthTokenResponse {
+  accessToken: string;
+}
+

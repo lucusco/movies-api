@@ -5,24 +5,26 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from './schemas/user.schema';
 import { UsersRepository } from './repositories/users.repository';
 import { USERS_REPOSITORY } from './repositories/users-repository.interface';
+import { PassportModule } from '@nestjs/passport';
 
 @Module({
-	imports: [
-		MongooseModule.forFeature([
-			{
-				name: User.name,
-				schema: UserSchema,
-			},
-		]),
-	],
-	controllers: [UsersController],
-	providers: [
-		UsersService,
-		{
-			provide: USERS_REPOSITORY,
-			useClass: UsersRepository,
-		},
-	],
-	exports: [UsersService]
+  imports: [
+    MongooseModule.forFeature([
+      {
+        name: User.name,
+        schema: UserSchema,
+      },
+    ]),
+    PassportModule.register({ defaultStrategy: 'jwt' }),
+  ],
+  controllers: [UsersController],
+  providers: [
+    UsersService,
+    {
+      provide: USERS_REPOSITORY,
+      useClass: UsersRepository,
+    },
+  ],
+  exports: [UsersService],
 })
 export class UsersModule {}
