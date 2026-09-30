@@ -44,3 +44,8 @@ Authorization: Bearer {{login.response.body.accessToken}}
 ### delete
 DELETE {{baseUrl}}/users/{{userId}}
 Authorization: Bearer {{login.response.body.accessToken}}
+
+
+# TMDB
+###
+GET {{baseUrl}}/media/search?query=Inception
